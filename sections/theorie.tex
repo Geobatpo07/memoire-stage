@@ -1,0 +1,72 @@
+\section{Modélisation des écoulements atmosphériques}
+
+La dynamique de l’atmosphère est régie par les lois de la mécanique des fluides appliquées à un fluide compressible sur une sphère en rotation. Dans ce cadre, les équations fondamentales sont celles d’Euler ou de Navier-Stokes, accompagnées de relations thermodynamiques et de lois de conservation (masse, quantité de mouvement, énergie).
+
+Toutefois, pour des phénomènes de grande échelle comme les cyclones tropicaux, certaines hypothèses permettent de simplifier les équations :
+\begin{itemize}
+    \item Le fluide est supposé incompressible et sans viscosité (fluide parfait) ;
+    \item Le système est étudié dans un référentiel tournant avec la Terre ;
+    \item L'effet de la courbure terrestre est pris en compte par une projection cartographique.
+\end{itemize}
+
+Ces hypothèses conduisent à des systèmes d’équations différentielles partiellement linéarisés, adaptés à l’analyse qualitative et à la modélisation simplifiée de structures tourbillonnaires.
+
+\section{Effet de Coriolis et structure des vents}
+
+L’effet de Coriolis est une force d’inertie apparente due à la rotation de la Terre. Dans l’hémisphère nord, elle dévie les mouvements vers la droite, et vers la gauche dans l’hémisphère sud. Elle joue un rôle central dans l’organisation des vents autour des systèmes de basse pression comme les cyclones.
+
+Le terme de Coriolis intervient dans les équations sous la forme :
+\[
+\vec{F}_C = -2m (\vec{\Omega} \times \vec{v}),
+\]
+où \( \vec{\Omega} \) est le vecteur de rotation terrestre et \( \vec{v} \) la vitesse du fluide. Cet effet conduit notamment à l’existence de vents tournants (vents géostrophiques) qui s’enroulent autour de l’œil du cyclone.
+
+\section{Présentation du préprint de LeRoux}
+
+Le préprint d’A.-Y. LeRoux, \textit{Modélisation des écoulements dans leur environnement} (2014), propose une modélisation mathématique rigoureuse des structures atmosphériques tourbillonnaires. Trois niveaux de modélisation y sont abordés dans la section 7.4, et constituent la base du modèle étudié durant ce stage.
+
+\subsection{Le modèle 2D cartographique (section 7.4.1)}
+
+Partant des équations d’Euler sur sphère, un premier modèle est proposé sous forme d’un système d’EDP simplifié exprimé sur la carte géographique (via la projection de Mercator) :
+\[
+\begin{cases}
+\partial_t u + u \partial_x u + v \partial_y u = (\xi^* - k)(u - u^*) + \omega_0 \sin\phi (v - v^*) \\
+\partial_t v + u \partial_x v + v \partial_y v = (\xi^* - k)(v - v^*) - \omega_0 \sin\phi (u - u^*)
+\end{cases}
+\]
+Ce système modélise le champ de vitesse relative par rapport au champ des alizés \( (u^*, v^*) \), en tenant compte de l’absorption d’énergie \( \xi^* \), de la friction \( k \), et de la force de Coriolis \( \omega_0 \sin\phi \).
+
+\subsection{Modélisation du mur de l’œil (section 7.4.2)}
+
+Le modèle autorise l’existence de discontinuités dans le champ de vitesse. Une telle discontinuité peut être interprétée comme le \textit{mur de l’œil} d’un cyclone. Le saut de vitesse \( (\Delta u, \Delta v) \) est alors tangent à la courbe de discontinuité \( S(x - u^*t, y - v^*t) = 0 \). Cette condition est obtenue en modélisant les solutions par des fonctions en escalier (fonction de Heaviside), et en exploitant les propriétés des distributions (notamment les travaux de Colombeau).
+
+\subsection{Le modèle axisymétrique en symétrie de révolution (section 7.4.3)}
+
+En exploitant la symétrie observée des cyclones, LeRoux introduit un modèle en coordonnées radiales \( \xi \), centré sur l’œil. Le champ de vitesse relative est exprimé comme :
+\[
+\begin{pmatrix}
+U \\
+V
+\end{pmatrix}
+=
+a(\xi)
+\begin{pmatrix}
+X \\
+Y
+\end{pmatrix}
++
+b(\xi)
+\begin{pmatrix}
+- Y \\
+X
+\end{pmatrix}
+\]
+où \( a(\xi) \) représente la composante radiale (convergence vers le centre), et \( b(\xi) \) la composante tangente (rotation autour de l’œil).
+
+Les fonctions \( a \) et \( b \) satisfont un système d’EDO non linéaire, dérivé du système cartographique. Une bifurcation apparaît pour certaines conditions sur \( \xi^* \), \( k \), et \( \omega_0 \), permettant la formation d’un cyclone structuré avec une zone centrale en rotation intense.
+
+L’introduction du \textit{facteur géostrophique} \( \theta(\xi) = -b(\xi)/a(\xi) \) permet d’interpréter physiquement la déviation du vent. Sa valeur initiale \( \theta_0 \) à la frontière extérieure \( R_{\text{ext}} \) est un paramètre déterminant de la structure du cyclone.
+
+---
+
+Ce chapitre pose ainsi le cadre mathématique et physique nécessaire à l’étude du modèle étudié dans la suite de ce travail.
