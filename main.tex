@@ -1,38 +1,53 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[a4paper,12pt]{book}
 
-\input{preambule.tex}
+% Import du préambule et page de garde
+\input{preambule}
+\input{pagedegarde}
+
+% Paramètres de la page de garde
+\title{Modélisation Mathématique Appliquée aux Cyclones}
+\author{\textbf{Geovany Batista Polo LAGUERRE, geovany.laguerre@etu.univ-antilles.fr}}
+\year{Année universitaire : \textbf{2024--2025}}
+\encadrants{
+\begin{tabular}{ccc}
+\textbf{Maximilian F. HASLER} & \textbf{Enseignant-chercheur} & Université des Antilles
+\end{tabular}
+}
+\blurb{
+\begin{flushleft}
+\begin{tabular}{l}
+\includegraphics[scale=0.5]{figures/logo_ufr-sen} \\
+\\
+{\taille{0.55}{2}Département de Mathématiques et Informatique} \\
+{\taille{0.5}{0.5}MASTER MATHÉMATIQUES \& APPLICATIONS}
+\end{tabular}
+\end{flushleft}
+}
 
 \begin{document}
 
-\begin{titlepage}
-    \centering
-    \vspace*{2cm}
-    {\LARGE\bfseries Modélisation mathématique appliquée aux cyclones \par}
-    \vspace{2cm}
-    {\Large Rapport de stage de Master 1 \par}
-    \vfill
-    {\large Réalisé par : Geovany Batista Polo LAGUERRE \par}
-    {\large Encadrant : M. Maximilian F. HASLER \par}
-    \vfill
-    {\large Université des Antilles – Avril - Juin 2025 \par}
-\end{titlepage}
+\maketitle
+
+% === Remerciements ===
+\include{remerciements}
 
 \tableofcontents
-\newpage
 
-\chapter*{Remerciements}
-
+% === Chapitres ===
 \chapter{Introduction}
 \input{sections/introduction}
 
-\chapter{Cadre théorique}
-\input{sections/theorie}
+\chapter{Méthodologie}
+\input{sections/methodologie}
+
+\chapter{Résultats et Discussion}
+\input{sections/resultats}
+
+\chapter{Conclusion}
+\input{sections/conclusion}
 
 \appendix
 \chapter{Annexes}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{biblio}
+\input{sections/annexes}
 
 \end{document}

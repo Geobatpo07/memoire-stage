@@ -1,22 +1,41 @@
+%! Author = Geovany
+%! Date = 4/29/2025
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
-\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[a4paper, margin=2.2cm]{geometry}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{hyperref}
-\usepackage{geometry}
-\geometry{margin=2.5cm}
-\usepackage{caption}
-\usepackage{subcaption}
+\usepackage{enumitem}
 \usepackage{fancyhdr}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue,
-}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{appendix}
+\usepackage{dsfont}
+\usepackage{makeidx}
+\usepackage{textcomp}
+\usepackage{multirow}
+\usepackage{layout}
+\usepackage{relsize}
+
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyfoot[C]{\thepage}
 \pagestyle{fancy}
-\fancyhead[L]{}
-\fancyhead[C]{Modélisation Cyclonique}
-\fancyhead[R]{\thepage}
+
+% Environnements de théorèmes
+\newtheorem{definit}{Définition}[section]
+\newtheorem{theorem}{Théorème}[section]
+\newtheorem{corollary}{Corollaire}[theorem]
+\newtheorem{lemma}[theorem]{Lemme}
+\newtheorem{exemple}{Exemple}[section]
+\newtheorem{prop}{Proposition}[section]
+
+% Commandes personnalisées
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}%
+\newcommand*{\QEDB}{\hfill\ensuremath{\square}}%
+\newcommand*{\R}{{\rm I\!R}}
+\newcommand*{\Hi}{\mathcal{H}}
+\newcommand{\taille}[2]{\fontfamily{phv}\fontseries{b}\fontsize{#1cm}{#2cm}\selectfont}
