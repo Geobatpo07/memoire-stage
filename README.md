@@ -108,4 +108,10 @@ Stage de recherche sous la direction de M. Maximilian HASLER.
 ---
 
 ## Licence
-Ce projet est sous licence MIT.
+Ce dépôt est protégé par la licence [Creative Commons Attribution - NonCommercial - NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+[![License: CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+
+Vous êtes libre de consulter, télécharger et partager ce mémoire **à des fins non commerciales**, **sans modifications**, et en **attribuant correctement l’auteur**.
+
+© 2025 Geovany Batista Polo LAGUERRE – Université des Antilles
