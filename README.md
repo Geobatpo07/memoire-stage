@@ -17,18 +17,19 @@ Le sujet porte sur l'**étude d'équations différentielles ordinaires (EDO) et 
 
 ## Contenu du dépôt
 
-| Fichier/Dossier    | Description                                 |
-|--------------------|---------------------------------------------|
-| `main.tex`         | Fichier principal du mémoire en LaTeX       |
-| `introduction.tex` | Introduction générale                       |
-| `theorie.tex`      | Théorie du modèle et rappels mathématiques  |
-| `resultats.tex`    | Présentation des résultats numériques       |
-| `conclusion.tex`   | Conclusion et perspectives                  |
-| `biblio.bib`       | Références bibliographiques (BibTeX)        |
-| `figures/`         | Figures générées par les simulations        |
-| `python/`          | Scripts Python pour la résolution numérique |
-| `out/`             | Fichiers rendus après la compilation        |
-| `README.md`        | Ce fichier de description                   |
+| Fichier/Dossier    | Description                                                    |
+|--------------------|----------------------------------------------------------------|
+| `main.tex`         | Fichier principal du mémoire en LaTeX                          |
+| `introduction.tex` | Introduction générale                                          |
+| `theorie.tex`      | Théorie du modèle et rappels mathématiques                     |
+| `resultats.tex`    | Présentation des résultats numériques                          |
+| `conclusion.tex`   | Conclusion et perspectives                                     |
+| `biblio.bib`       | Références bibliographiques (BibTeX)                           |
+| `sections/`        | Fichiers .tex qui seront considérés comme le corps du document |
+| `figures/`         | Figures générées par les simulations et autres images utiles   |
+| `simulations/`     | Scripts Python pour la simulation/résolution numérique         |
+| `out/`             | Fichiers rendus après la compilation                           |
+| `README.md`        | Ce fichier de description                                      |
 
 ---
 
