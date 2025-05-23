@@ -1,72 +1,70 @@
-\section{Modélisation des écoulements atmosphériques}
+\chapter{Th\'eorie}
 
-La dynamique de l’atmosphère est régie par les lois de la mécanique des fluides appliquées à un fluide compressible sur une sphère en rotation. Dans ce cadre, les équations fondamentales sont celles d’Euler ou de Navier-Stokes, accompagnées de relations thermodynamiques et de lois de conservation (masse, quantité de mouvement, énergie).
+\section{Mod\'elisation des \'ecoulements atmosph\'eriques}
 
-Toutefois, pour des phénomènes de grande échelle comme les cyclones tropicaux, certaines hypothèses permettent de simplifier les équations :
+La dynamique de l'atmosph\`ere est r\'egie par les lois de la m\'ecanique des fluides appliqu\'ees \`a un fluide compressible en rotation. Dans ce cadre, les \textit{\'equations de Navier--Stokes} ou d'\textit{Euler} sont accompagn\'ees de lois de conservation (masse, quantit\'e de mouvement, \'energie) et de conditions physiques (pression, temp\'erature).
+
+Pour les ph\'enom\`enes m\'esoscopiques tels que les cyclones tropicaux, certaines hypoth\`eses de simplification sont admissibles :
 \begin{itemize}
-    \item Le fluide est supposé incompressible et sans viscosité (fluide parfait) ;
-    \item Le système est étudié dans un référentiel tournant avec la Terre ;
-    \item L'effet de la courbure terrestre est pris en compte par une projection cartographique.
+    \item Le fluide est trait\'e comme incompressible et sans viscosit\'e (fluide parfait) ;
+    \item Le syst\`eme est consid\'er\'e dans un r\'ef\'erentiel en rotation avec la Terre ;
+    \item La sph\`ere terrestre est projet\'ee sur une carte (projection de Mercator).
 \end{itemize}
 
-Ces hypothèses conduisent à des systèmes d’équations différentielles partiellement linéarisés, adaptés à l’analyse qualitative et à la modélisation simplifiée de structures tourbillonnaires.
+Ces hypoth\`eses conduisent \`a des mod\`eles d'\'ecoulements simplifi\'es, adapt\'es \`a une analyse math\'ematique et \`a une simulation num\'erique cibl\'ee.
 
-\section{Effet de Coriolis et structure des vents}
+\section{Effet de Coriolis et vents g\'eostrophiques}
 
-L’effet de Coriolis est une force d’inertie apparente due à la rotation de la Terre. Dans l’hémisphère nord, elle dévie les mouvements vers la droite, et vers la gauche dans l’hémisphère sud. Elle joue un rôle central dans l’organisation des vents autour des systèmes de basse pression comme les cyclones.
+La rotation terrestre induit une force fictive dite force de Coriolis, responsable de la d\'eviation des masses d'air. Dans l'h\'emisph\`ere nord, cette d\'eviation s'effectue vers la droite, et vers la gauche dans l'h\'emisph\`ere sud. Cette force modifie la dynamique des vents autour des zones de basse pression.
 
-Le terme de Coriolis intervient dans les équations sous la forme :
+Elle s'exprime par :
 \[
 \vec{F}_C = -2m (\vec{\Omega} \times \vec{v}),
 \]
-où \( \vec{\Omega} \) est le vecteur de rotation terrestre et \( \vec{v} \) la vitesse du fluide. Cet effet conduit notamment à l’existence de vents tournants (vents géostrophiques) qui s’enroulent autour de l’œil du cyclone.
+o\`u $\vec{\Omega}$ est le vecteur de rotation terrestre et $\vec{v}$ la vitesse du fluide. Cette force est \`a l'origine de l'organisation circulaire des vents autour de l'\oe il des cyclones.
 
-\section{Présentation du préprint de LeRoux}
+\section{Trois niveaux de mod\'elisation selon LeRoux (2014)}
 
-Le préprint d’A.-Y. LeRoux, \textit{Modélisation des écoulements dans leur environnement} (2014), propose une modélisation mathématique rigoureuse des structures atmosphériques tourbillonnaires. Trois niveaux de modélisation y sont abordés dans la section 7.4, et constituent la base du modèle étudié durant ce stage.
+Le pr\'eprint de A.-Y. LeRoux \cite{leroux2014modelisation} propose une hi\'erarchie de mod\`eles pour d\'ecrire les structures tourbillonnaires :
 
-\subsection{Le modèle 2D cartographique (section 7.4.1)}
+\subsection{Mod\`ele cartographique 2D (section 7.4.1)}
 
-Partant des équations d’Euler sur sphère, un premier modèle est proposé sous forme d’un système d’EDP simplifié exprimé sur la carte géographique (via la projection de Mercator) :
+Il s'agit d'un syst\`eme d'\'EDP exprim\'e en projection cartographique, qui mod\'elise le champ de vitesses $(u,v)$ par rapport aux aliz\'es $(u^*,v^*)$ :
 \[
 \begin{cases}
-\partial_t u + u \partial_x u + v \partial_y u = (\xi^* - k)(u - u^*) + \omega_0 \sin\phi (v - v^*) \\
-\partial_t v + u \partial_x v + v \partial_y v = (\xi^* - k)(v - v^*) - \omega_0 \sin\phi (u - u^*)
+\frac{\partial u}{\partial t} + u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial y} = (\xi^* - k)(u - u^*) + \omega_0 \sin\phi (v - v^*) \\
+\frac{\partial v}{\partial t} + u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y} = (\xi^* - k)(v - v^*) - \omega_0 \sin\phi (u - u^*)
 \end{cases}
 \]
-Ce système modélise le champ de vitesse relative par rapport au champ des alizés \( (u^*, v^*) \), en tenant compte de l’absorption d’énergie \( \xi^* \), de la friction \( k \), et de la force de Coriolis \( \omega_0 \sin\phi \).
+Ce mod\`ele conserve les propri\'et\'es dynamiques de rotation, friction et for\c{c}age.
 
-\subsection{Modélisation du mur de l’œil (section 7.4.2)}
+\subsection{Mod\'elisation du mur de l'\oe il (section 7.4.2)}
 
-Le modèle autorise l’existence de discontinuités dans le champ de vitesse. Une telle discontinuité peut être interprétée comme le \textit{mur de l’œil} d’un cyclone. Le saut de vitesse \( (\Delta u, \Delta v) \) est alors tangent à la courbe de discontinuité \( S(x - u^*t, y - v^*t) = 0 \). Cette condition est obtenue en modélisant les solutions par des fonctions en escalier (fonction de Heaviside), et en exploitant les propriétés des distributions (notamment les travaux de Colombeau).
+Une discontinuit\'e dans le champ de vitesses peut appara\^itre et correspondre au mur de l'\oe il. L'utilisation de la fonction de Heaviside permet d'exprimer math\'ematiquement ce saut. Le r\'esultat cl\'e est que le vecteur saut $(\Delta u, \Delta v)$ est tangent \`a la courbe $S(x - u^*t, y - v^*t) = 0$, front de discontinuit\'e.
 
-\subsection{Le modèle axisymétrique en symétrie de révolution (section 7.4.3)}
+\subsection{Mod\`ele en sym\'etrie de r\'evolution (section 7.4.3)}
 
-En exploitant la symétrie observée des cyclones, LeRoux introduit un modèle en coordonnées radiales \( \xi \), centré sur l’œil. Le champ de vitesse relative est exprimé comme :
+Ce mod\`ele r\'eduit l'\'etude \`a deux fonctions scalaires $a(\xi)$ (radial) et $b(\xi)$ (tangent) :
 \[
 \begin{pmatrix}
 U \\
 V
 \end{pmatrix}
-=
-a(\xi)
+= a(\xi)
 \begin{pmatrix}
 X \\
 Y
 \end{pmatrix}
-+
-b(\xi)
++ b(\xi)
 \begin{pmatrix}
 - Y \\
 X
 \end{pmatrix}
 \]
-où \( a(\xi) \) représente la composante radiale (convergence vers le centre), et \( b(\xi) \) la composante tangente (rotation autour de l’œil).
+Ces fonctions v\'erifient un syst\`eme d'\'EDO non lin\'eaire. L'introduction du facteur g\'eostrophique $\theta(\xi) = -b(\xi)/a(\xi)$ permet de r\'e\'ecrire le syst\`eme sous forme r\'eduite et d'exhiber une bifurcation \`a l'entr\'ee du domaine.
 
-Les fonctions \( a \) et \( b \) satisfont un système d’EDO non linéaire, dérivé du système cartographique. Une bifurcation apparaît pour certaines conditions sur \( \xi^* \), \( k \), et \( \omega_0 \), permettant la formation d’un cyclone structuré avec une zone centrale en rotation intense.
+Ce mod\`ele constitue le point de d\'epart des simulations pr\'esent\'ees, et de l'analyse asymptotique men\'ee au voisinage de $\xi_m$ o\`u $a(\xi) \to 0$, lieu critique de formation du mur de l'\oe il.
 
-L’introduction du \textit{facteur géostrophique} \( \theta(\xi) = -b(\xi)/a(\xi) \) permet d’interpréter physiquement la déviation du vent. Sa valeur initiale \( \theta_0 \) à la frontière extérieure \( R_{\text{ext}} \) est un paramètre déterminant de la structure du cyclone.
+\medskip
 
----
-
-Ce chapitre pose ainsi le cadre mathématique et physique nécessaire à l’étude du modèle étudié dans la suite de ce travail.
+Ce chapitre pose ainsi les fondations physiques et math\'ematiques du mod\`ele id\'ealis\'e de cyclone utilis\'e dans la suite du m\'emoire.

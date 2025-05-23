@@ -1,32 +1,34 @@
-\section*{Contexte général}
+\section*{Contexte g\'en\'eral}
 
-Les phénomènes cycloniques représentent des systèmes dynamiques complexes ayant un impact majeur sur les régions tropicales et subtropicales. Leur compréhension est essentielle tant pour des raisons scientifiques que pour des enjeux sociétaux liés à la prévention des catastrophes naturelles. La modélisation mathématique de tels phénomènes permet de traduire les mécanismes physiques en équations différentielles, dérivées des lois fondamentales de la mécanique des fluides.
+Les ph\'enom\`enes cycloniques repr\'esentent des syst\`emes dynamiques complexes ayant un impact majeur sur les r\'egions tropicales et subtropicales. Leur compr\'ehension est essentielle tant pour des raisons scientifiques que pour des enjeux soci\'etaux li\'es \`a la pr\'evention des catastrophes naturelles. La mod\'elisation math\'ematique de tels ph\'enom\`enes permet de traduire les m\'ecanismes physiques en \'equations diff\'erentielles, d\'eriv\'ees des lois fondamentales de la m\'ecanique des fluides.
 
-Cette approche permet d'étudier, de manière théorique ou numérique, des aspects tels que la formation, l'évolution et la structure interne des cyclones. En particulier, les modèles simplifiés basés sur des hypothèses de symétrie ou d’équilibre permettent de mieux saisir les phénomènes dominants sans recourir à des simulations numériques lourdes.
+Cette approche permet d'\'etudier, de mani\`ere th\'eorique ou num\'erique, des aspects tels que la formation, l'\'evolution et la structure interne des cyclones. En particulier, les mod\`eles simplifi\'es bas\'es sur des hypoth\`eses de sym\'etrie ou d'\'equilibre permettent de mieux saisir les ph\'enom\`enes dominants sans recourir \`a des simulations num\'eriques lourdes.
 
 \section*{Objectif du stage}
 
-Ce stage de recherche, réalisé dans le cadre du Master 1 « Mathématiques et Applications », a pour objectif l’étude d’un système d’équations différentielles ordinaires (EDO) issu de la modélisation des cyclones. Ce système, basé sur un modèle en symétrie de révolution, est présenté dans le préprint d’Alain-Yves LeRoux intitulé \textit{Modélisation des écoulements dans leur environnement} (2014).
+Ce stage de recherche, r\'ealis\'e dans le cadre du Master 1 \og Math\'ematiques et Applications \fg{}, a pour objectif l'\'etude d'un syst\`eme d'\'equations diff\'erentielles ordinaires (EDO) issu de la mod\'elisation des cyclones. Ce syst\`eme, bas\'e sur un mod\`ele en sym\'etrie de r\'evolution, est pr\'esent\'e dans le pr\'eprint d'Alain-Yves LeRoux intitul\'e \textit{Mod\'elisation des \'ecoulements dans leur environnement} (2014).
 
-L’analyse porte notamment sur la compréhension des hypothèses physiques, la structure mathématique du modèle, ainsi que sur les propriétés des solutions, en particulier celles associées à la formation du mur de l’œil d’un cyclone. Une attention particulière est portée à la bifurcation de solutions au voisinage du bord extérieur du système, condition nécessaire à l’apparition d’un comportement cyclonique structuré.
+L'analyse porte notamment sur la compr\'ehension des hypoth\`eses physiques, la structure math\'ematique du mod\`ele, ainsi que sur les propri\'et\'es des solutions, en particulier celles associ\'ees \`a la formation du mur de l'\oe il d'un cyclone. Une attention particuli\`ere est port\'ee \`a la bifurcation de solutions au voisinage du bord ext\'erieur du syst\`eme, condition n\'ecessaire \`a l'apparition d'un comportement cyclonique structur\'e. Une mod\'elisation par EDP du champ de vitesses est \textit{\'egalement} envisag\'ee, et les deux approches sont compar\'ees par validation crois\'ee. Enfin, une \textbf{analyse asymptotique} rigoureuse est r\'ealis\'ee autour du mur de l'\oe il afin d'expliquer les singularit\'es du champ de vitesse pr\'edites par le mod\`ele.
 
-\section*{Démarche adoptée}
+\section*{D\'emarche adopt\'ee}
 
-Le travail a débuté par une recherche bibliographique sur les équations de la dynamique atmosphérique, la force de Coriolis, et les modèles d’écoulements géophysiques. Une lecture approfondie du préprint de LeRoux \cite{leroux2014modelisation} a été menée, avec un accent sur :
+Le travail a d\'ebut\'e par une recherche bibliographique sur les \'equations de la dynamique atmosph\'erique, la force de Coriolis, et les mod\`eles d'\'ecoulements g\'eophysiques. Une lecture approfondie du pr\'eprint de LeRoux~\cite{leroux2014modelisation} a \'et\'e men\'ee, avec un accent sur :
 \begin{itemize}
-    \item la section 7.2, qui présente les équations du vent dans les régions intertropicales ;
-    \item la section 7.4.1, introduisant un modèle cyclonique 2D simplifié ;
-    \item la section 7.4.2, concernant le mur de l’œil comme discontinuité dans le champ de vitesses ;
-    \item la section 7.4.3, développant un modèle axisymétrique régi par un système d’EDO.
+    \item la section~7.2, qui pr\'esente les \'equations du vent dans les r\'egions intertropicales ;
+    \item la section~7.4.1, introduisant un mod\`ele cyclonique 2D simplifi\'e ;
+    \item la section~7.4.2, concernant le mur de l'\oe il comme discontinuit\'e dans le champ de vitesses ;
+    \item la section~7.4.3, d\'eveloppant un mod\`ele axisym\'etrique r\'egi par un syst\`eme d'EDO.
 \end{itemize}
 
-À partir de ces éléments, une phase de formalisation mathématique a permis d’analyser le comportement des solutions, les effets de la force de Coriolis et les conditions menant à la formation d’un cyclone. Des pistes de visualisation numérique ont également été explorées en fin de parcours.
+\`A partir de ces \'el\'ements, une phase de formalisation math\'ematique a permis d'analyser le comportement des solutions, les effets de la force de Coriolis et les conditions menant \`a la formation d'un cyclone. Des simulations num\'eriques ont \'et\'e r\'ealis\'ees pour les deux mod\`eles, suivies d'une phase de validation crois\'ee. L'analyse asymptotique a ensuite permis de caract\'eriser le comportement local du champ de vitesse au voisinage du mur de l'\oe il, en r\'ev\'elant les conditions limites internes compatibles avec le mod\`ele global.
 
-\section*{Structure du mémoire}
+\section*{Structure du m\'emoire}
 
-Ce mémoire est organisé en trois chapitres principaux :
+Ce m\'emoire est organis\'e en cinq chapitres principaux :
 \begin{itemize}
-    \item Le \textbf{Chapitre 1} pose le cadre théorique : équations d’Euler, modélisation des écoulements atmosphériques, hypothèses simplificatrices, et introduction à la force de Coriolis.
-    \item Le \textbf{Chapitre 2} expose en détail le modèle étudié, présente les équations issues du préprint, ainsi que leur traitement mathématique.
-    \item Le \textbf{Chapitre 3} discute les résultats obtenus, les limites du modèle, et les perspectives d’amélioration ou d’extension.
+    \item Le \textbf{Chapitre 1} pose le cadre th\'eorique : \'equations d'Euler, mod\'elisation des \'ecoulements atmosph\'eriques, hypoth\`eses simplificatrices, et introduction \`a la force de Coriolis ;
+    \item Le \textbf{Chapitre 2} expose la m\'ethodologie suivie pour l'\'etude et la simulation ;
+    \item Le \textbf{Chapitre 3} pr\'esente les mod\`eles issus du pr\'eprint de LeRoux ;
+    \item Le \textbf{Chapitre 4} discute les r\'esultats obtenus, les validations crois\'ees, les limites du mod\`ele, ainsi que les contributions de l'analyse asymptotique ;
+    \item Le \textbf{Chapitre 5} propose une conclusion et des perspectives pour des travaux futurs.
 \end{itemize}

@@ -1,0 +1,44 @@
+\chapter{Méthodologie}
+
+Ce travail s'inscrit dans une démarche de modélisation mathématique appliquée à un phénomène géophysique complexe : les cyclones tropicaux. La méthodologie adoptée repose sur une approche rigoureuse, articulée en étapes successives allant de la formulation théorique à l’analyse asymptotique des solutions.
+
+\section*{1. Analyse bibliographique et préparation théorique}
+
+Une première phase de recherche documentaire a permis d’identifier les modèles pertinents issus de la littérature, notamment le préprint d’A.-Y. LeRoux (2014), qui propose une modélisation hiérarchisée des structures cycloniques. Cette étape a permis de revisiter les équations fondamentales de la mécanique des fluides, en particulier celles d’Euler pour un fluide parfait soumis à la force de Coriolis, à la friction et à des mécanismes d’absorption d’énergie.
+
+\section*{2. Formulation du modèle}
+
+Deux cadres de modélisation ont été extraits du préprint :
+\begin{itemize}
+    \item un modèle en coordonnées cartésiennes (EDP), décrivant l’évolution spatio-temporelle du champ de vitesses dans un repère terrestre projeté (Mercator) ;
+    \item un modèle axisymétrique (EDO), basé sur la symétrie de révolution observée dans les cyclones, réduisant le problème à deux fonctions scalaires dépendant du rayon.
+\end{itemize}
+
+Ces deux formulations ont été étudiées séparément et comparées dans un second temps.
+
+\section*{3. Implémentation numérique et pipeline Python}
+
+Les modèles EDP et EDO ont été simulés numériquement à l’aide d’un environnement Python structuré :
+\begin{itemize}
+    \item Pour les EDP : schéma explicite de type Lax–Friedrichs, validé par condition CFL ;
+    \item Pour les EDO : résolution rétrograde via \texttt{solve\_ivp} avec plusieurs méthodes (RK45, BDF), mais aussi formulation réduite utilisant le facteur géostrophique $\theta(\xi)$.
+\end{itemize}
+
+L’ensemble des scripts est intégré dans un pipeline automatisé de simulation, validation et visualisation.
+
+\section*{4. Validation croisée EDO/EDP}
+
+Afin d’évaluer la cohérence des deux modèles, un profil radial de la norme du champ de vitesses simulé (EDP) a été comparé aux prédictions du modèle théorique (EDO). Cette validation croisée a permis de mettre en évidence les convergences et écarts entre dynamique continue et structure stationnaire idéalisée.
+
+\section*{5. Analyse asymptotique locale}
+
+Un volet spécifique du stage a porté sur l’analyse asymptotique du système EDO au voisinage du mur de l’œil ($a(\xi) \to 0$). À l’aide d’un développement de Taylor des fonctions $a(\xi)$ et $b(\xi)$ autour de $\xi_m$, les équations ont été développées et linéarisées par ordre. Cette analyse a révélé les contraintes sur les coefficients asymptotiques et la structure locale du champ au point de bifurcation.
+
+\section*{6. Visualisation et interprétation}
+
+Des représentations graphiques — cartes de vitesses, profils radiaux, écarts relatifs, visualisation sur sphère — ont permis de valider et illustrer les résultats numériques, en particulier la localisation du mur de l’œil, la structure spirale du champ, et le comportement asymptotique. Ces visualisations ont constitué un outil de validation et de communication des phénomènes simulés.
+
+\medskip
+
+Cette méthodologie hybride — à la croisée de la théorie, de la simulation et de l’analyse — fournit un cadre robuste pour explorer les dynamiques cycloniques dans un cadre simplifié mais réaliste.
+

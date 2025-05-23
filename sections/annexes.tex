@@ -1,4 +1,50 @@
 %! Author = lgeov
 %! Date = 4/29/2025
 
-% Preamble
+\chapter{Annexes}
+
+\section*{A. Param\`etres physiques utilis\'es}
+\begin{itemize}
+    \item $\omega_0 = 7.2921 \times 10^{-5}$ rad/s : vitesse de rotation de la Terre ;
+    \item $\phi^* = 20^\circ$ : latitude d'observation ;
+    \item $k = 10^{-5}$ : coefficient de friction ;
+    \item $\xi^* = 5 \times 10^{-5}$ : param\`etre d'absorption d'\'energie ;
+    \item $R_{\text{ext}} = 300$ km : rayon externe du cyclone ;
+    \item $R_{\text{\oe il}} \approx 40$ km : rayon approximatif du mur de l'\oe il.
+\end{itemize}
+
+\section*{B. Outils logiciels}
+\begin{itemize}
+    \item \textbf{Python 3.11} avec les biblioth\`eques :
+    \begin{itemize}
+        \item \texttt{NumPy}, \texttt{Matplotlib}, \texttt{SymPy}, \texttt{SciPy} pour la simulation ;
+        \item \texttt{Pandas}, \texttt{tqdm}, \texttt{argparse} pour la gestion du pipeline ;
+        \item \texttt{Overleaf} pour la r\'edaction du m\'emoire en \LaTeX.
+    \end{itemize}
+    \item Utilisation de versions sauvegard\'ees automatiques des fichiers de simulation pour assurer la reproductibilit\'e.
+\end{itemize}
+
+\section*{C. Sch\'emas num\'eriques impl\'ement\'es}
+\begin{itemize}
+    \item \textbf{EDP} : sch\'ema explicite de type Lax--Friedrichs \`a pas de temps adapt\'e \`a la condition CFL ;
+    \item \textbf{EDO} :
+    \begin{itemize}
+        \item Runge--Kutta \texttt{RK45} via \texttt{solve\_ivp},
+        \item sch\'ema implicite \texttt{BDF},
+        \item formulation r\'eduite \`a l'aide du facteur g\'eostrophique $\theta(\xi)$.
+    \end{itemize}
+\end{itemize}
+
+\section*{D. Code source}
+Les scripts de simulation, validation, et analyse asymptotique sont organis\'es comme suit :
+\begin{itemize}
+    \item \texttt{edo\_simulation.py}, \texttt{edo\_methods.py} : r\'esolution du syst\`eme d'EDO ;
+    \item \texttt{edp\_simulation.py} : champ vectoriel 2D ;
+    \item \texttt{validation\_edo\_edp.py}, \texttt{edo\_validation\_cross.py} : comparaison et \'ecarts ;
+    \item \texttt{asymptotic\_analysis.py} : analyse au voisinage du mur de l'\oe il ;
+    \item \texttt{cyclone\_pipeline.py} : ex\'ecution de l'ensemble du processus.
+\end{itemize}
+
+\section*{E. Figures compl\'ementaires}
+\input{results/figures_generated.tex}
+

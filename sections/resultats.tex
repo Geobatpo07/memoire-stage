@@ -1,0 +1,49 @@
+\chapter{R\'esultats et discussion}
+
+Ce chapitre pr\'esente les principaux r\'esultats num\'eriques obtenus \`a partir des mod\`eles EDO et EDP. Les figures associ\'ees sont issues de simulations Python d\'evelopp\'ees dans le cadre de ce travail. Une validation croisée est ensuite men\'ee pour confronter les deux approches.
+
+\section{Simulation EDO : structure radiale du cyclone}
+
+Le syst\`eme d'\'equations diff\'erentielles ordinaires issu du mod\`ele axisym\'etrique a \'et\'e r\'esolu num\'eriquement par plusieurs m\'ethodes :
+\begin{itemize}
+    \item int\'egration classique de type Runge--Kutta (\texttt{solve\_ivp}),
+    \item sch\'ema implicite de type BDF pour syst\`eme raide,
+    \item m\'ethode r\'etrograde d'Euler explicite,
+    \item mod\`ele r\'eduit via l'introduction du facteur g\'eostrophique $\theta(\xi)$.
+\end{itemize}
+
+Les profils des composantes radiale $a(\xi)$, tangente $b(\xi)$, du facteur $\theta(\xi)$ et de l'\'energie cin\'etique $E(\xi)$ ont \'et\'e trac\'es et compar\'es. Une forte coh\'erence entre les m\'ethodes a \'et\'e observ\'ee, sauf au voisinage de l'\oe il (l\`a o\`u $a \to 0$).
+
+\section{Simulation EDP : champ de vitesse 2D}
+
+Le mod\`ele EDP cartographique a \'et\'e simul\'e sur un domaine 2D via un sch\'ema explicite de type Lax--Friedrichs. Les champs de vitesse $(u(x,y), v(x,y))$ ont \'et\'e visualis\'es sous forme :
+\begin{itemize}
+    \item de champ vectoriel,
+    \item de carte de la norme $\|v\|$,
+    \item de trajectoires typiques des particules.
+\end{itemize}
+
+La structure tourbillonnaire attendue est clairement identifi\'ee. L'intensit\'e maximale de la vitesse est localis\'ee autour du mur de l'\oe il.
+
+\section{Validation crois\'ee EDO / EDP}
+
+Pour comparer les deux mod\`eles, un profil radial moyen de $\|v\|$ a \'et\'e extrait \`a partir du champ simul\'e en EDP. Ce profil a \'et\'e compar\'e aux valeurs th\'eoriques issues du mod\`ele EDO. Les courbes obtenues sont proches sur l'intervalle $[R_m, R_{\text{ext}}]$, validant la coh\'erence des deux approches.
+
+\section{Analyse des \'ecarts entre m\'ethodes EDO}
+
+Une comparaison des m\'ethodes de r\'esolution a \'et\'e r\'ealis\'ee en prenant la solution obtenue par Runge--Kutta comme r\'ef\'erence. Les \'ecarts relatifs suivants ont \'et\'e trac\'es :
+\begin{itemize}
+    \item $\Delta a(\xi)$, $\Delta b(\xi)$,
+    \item $\Delta \theta(\xi)$,
+    \item $\Delta E(\xi)$.
+\end{itemize}
+
+Ces graphes permettent de quantifier les erreurs introduites par les m\'ethodes plus simples (Euler, $\theta$-formulation). La m\'ethode \texttt{solve\_ivp} reste la plus robuste num\'eriquement.
+
+\section{Visualisations graphiques}
+
+Les figures int\'egr\'ees \`a ce travail montrent l'ad\'equation entre simulation et mod\`ele th\'eorique. La structure en spirale, l'intensit\'e au mur de l'\oe il, et l'organisation du champ vectoriel renforcent la validit\'e physique du mod\`ele adopt\'e.
+
+\medskip
+
+L'ensemble de ces r\'esultats valide la pertinence du mod\`ele d\'evelopp\'e et sugg\`ere plusieurs pistes d'approfondissement, notamment l'am\'elioration de la simulation proche du mur de l'\oe il ou l'int\'egration d'effets thermodynamiques plus complexes.

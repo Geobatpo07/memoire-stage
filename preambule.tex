@@ -7,6 +7,7 @@
 \usepackage[a4paper, margin=2.2cm]{geometry}
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{float}
 \usepackage{enumitem}
 \usepackage{fancyhdr}
@@ -20,10 +21,15 @@
 \usepackage{layout}
 \usepackage{relsize}
 
-\fancyhf{}
-\fancyhead[L]{\leftmark}
-\fancyfoot[C]{\thepage}
+%\fancyhf{}
+%\fancyhead[L]{\leftmark}
+%\fancyfoot[C]{\thepage}
+%\pagestyle{fancy}
+
 \pagestyle{fancy}
+\fancyhead[L]{}
+\fancyhead[C]{Modélisation Mathématique Appliquée aux Cyclones}
+\fancyhead[R]{\thepage}
 
 % Environnements de théorèmes
 \newtheorem{definit}{Définition}[section]

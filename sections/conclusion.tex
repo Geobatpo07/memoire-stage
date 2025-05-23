@@ -1,0 +1,22 @@
+\chapter{Conclusion}
+
+Ce travail de recherche a permis d'approfondir la mod\'elisation math\'ematique des cyclones tropicaux \`a travers une double approche : une formulation r\'eduite en sym\'etrie de r\'evolution (EDO) et une mod\'elisation bidimensionnelle de type EDP. Ces mod\`eles reposent sur une simplification rigoureuse des \textit{\'equations de la dynamique atmosph\'erique}, tenant compte des effets de Coriolis, de la friction, et de l'apport d'\'energie.
+
+Les simulations num\'eriques ont mis en \'evidence la coh\'erence qualitative et quantitative entre les deux approches, en particulier pour les profils radiaux de vitesse. L'analyse asymptotique men\'ee au voisinage du mur de l'\oe il du cyclone a permis de caract\'eriser la transition critique entre r\'egime radial et r\'egime tourbillonnaire, et de valider le comportement singulier observ\'e en simulation. Cette analyse, fond\'ee sur le d\'eveloppement en s\'erie des composantes de vitesse, a mis en lumi\`ere les contraintes structurelles sur les coefficients du mod\`ele et a renforc\'e l'interpr\'etation du mur de l'\oe il comme front dynamique.
+
+La mise en \oe uvre informatique, enti\`erement r\'ealis\'ee en Python, a permis de d\'evelopper un pipeline modulaire de simulation, de validation et de visualisation des r\'esultats. Ce cadre est extensible \`a d'autres configurations (non axisym\'etriques, thermodynamiques, multicouches).
+
+\section*{Perspectives}
+
+Plusieurs pistes d'am\'elioration et d'approfondissement peuvent \^etre envisag\'ees :
+\begin{itemize}
+    \item Int\'egration d'une mod\'elisation thermodynamique (pression, temp\'erature) \`a travers un syst\`eme coupl\'e ;
+    \item Passage \`a une r\'esolution num\'erique adaptative dans les zones de forte variation ;
+    \item Validation du mod\`ele sur des donn\'ees r\'eelles issues de satellites ou de stations m\'et\'eorologiques ;
+    \item Extension \`a un mod\`ele tridimensionnel prenant en compte les variations verticales de l'atmosph\`ere ;
+    \item Analyse asymptotique compl\'ementaire \`a des ordres sup\'erieurs et en dehors de la sym\'etrie pour explorer la robustesse du comportement singulier au mur de l'\oe il.
+\end{itemize}
+
+\medskip
+
+Ce stage a donc permis non seulement de v\'erifier num\'eriquement un mod\`ele analytique complexe, mais aussi d'ouvrir des perspectives vers une mod\'elisation plus r\'ealiste et pr\'edictive des ph\'enom\`enes cycloniques.

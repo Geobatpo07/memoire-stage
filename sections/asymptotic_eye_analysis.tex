@@ -1,0 +1,61 @@
+%! Author = lgeov
+%! Date = 5/22/2025
+
+\chapter{Analyse asymptotique au voisinage du mur de l’œil}
+
+L’étude du système d’équations différentielles ordinaires (EDO) précédemment introduit révèle une structure singulière lorsque la fonction $a(\xi)$ tend vers zéro. Ce comportement intervient au niveau du mur de l’œil du cyclone, c’est-à-dire lorsque la composante radiale de la vitesse relative devient nulle. Afin de caractériser ce régime critique, une analyse asymptotique locale est réalisée autour d’un point $\xi = \xi_m$ où $a(\xi_m) \approx 0$.
+
+\section{Développement formel des solutions}
+
+Soit $\delta = \xi - \xi_m$, on suppose que les fonctions $a(\xi)$ et $b(\xi)$ admettent un développement en série de Taylor :
+
+\[
+\begin{aligned}
+a(\xi) &= \alpha_1 \delta + \alpha_2 \delta^2 + \alpha_3 \delta^3 + \dots, \\\\
+b(\xi) &= \beta_0 + \beta_1 \delta + \beta_2 \delta^2 + \dots
+\end{aligned}
+\]
+
+où les coefficients $\alpha_i$ et $\beta_i$ sont supposés réels. L’hypothèse clé est que $a(\xi)$ s’annule en $\xi = \xi_m$, tandis que $b(\xi)$ reste régulier.
+
+\section{Équations différentielles asymptotiques}
+
+Le système original s’écrit sous la forme :
+
+\[
+\begin{aligned}
+a a' \xi + a^2 - b^2 &= (\xi^* - k) a + \omega_0 \sin(\varphi^*) b, \\\\
+a b' \xi + 2 a b &= (\xi^* - k) b - \omega_0 \sin(\varphi^*) a,
+\end{aligned}
+\]
+
+où $\omega_0$ est la rotation terrestre, $\varphi^*$ la latitude, $k$ un coefficient de friction, et $\xi^*$ un paramètre de source d’énergie.
+
+En injectant les développements en série dans ce système et en le développant en puissances de $\delta$, on obtient, par identification des puissances, une suite d’équations aux ordres croissants.
+
+\section{Résultats de l’expansion}
+
+Les expressions suivantes représentent les équations extraites aux ordres 0, 1 et 2 :
+
+\begin{itemize}
+    \item \textbf{Ordre 0 :} équilibre entre les termes quadratiques de $b$ et le forçage coriolis.
+    \item \textbf{Ordre 1 :} relation linéaire entre $\alpha_1$, $\beta_0$ et $\beta_1$.
+    \item \textbf{Ordre 2 :} contrainte supplémentaire sur les dérivées secondes.
+\end{itemize}
+
+Ces équations permettent de déterminer des conditions nécessaires sur les coefficients du développement pour que la solution soit régulière au voisinage du mur.
+
+\section{Discussion}
+
+L’analyse montre que le comportement local du cyclone au niveau du mur de l’œil est gouverné par un équilibre subtil entre dissipation, apport d’énergie, et effet de Coriolis. En particulier, la valeur de $\beta_0$ (la vitesse tangente au mur) satisfait une relation quadratique :
+
+\[
+-b_0^2 = \omega_0 \sin(\varphi^*) b_0,
+\]
+
+ce qui conduit soit à une annulation de $b_0$, soit à un équilibre forcé dû à la courbure de la Terre. Cette analyse justifie le caractère non trivial de la transition au niveau du mur de l’œil et éclaire les profils de vitesses observés numériquement.
+
+\section*{Conclusion}
+
+Ce développement asymptotique constitue une étape essentielle pour valider les solutions globales du système, en assurant la compatibilité locale des profils de vitesse avec les contraintes dynamiques imposées par la géométrie du cyclone. Il peut également guider les conditions initiales ou les ajustements nécessaires pour la résolution numérique complète.
+
