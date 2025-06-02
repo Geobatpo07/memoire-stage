@@ -6,7 +6,15 @@ from tqdm import tqdm
 from edp_simulation import simulate_edp
 from edo_simulation import main as run_edo_cli
 from validation_edo_edp import validate_edo_edp
-from edo_validation_cross import methods as edo_methods
+from edo_methods import simulate_edo_ivp, simulate_edo_ivp_bdf, simulate_edo_euler_backward, simulate_edo_reduced_theta
+
+# Define methods dictionary similar to what was in edo_validation_cross
+edo_methods = {
+    "ivp": simulate_edo_ivp,
+    "bdf": simulate_edo_ivp_bdf,
+    "euler": simulate_edo_euler_backward,
+    "theta": simulate_edo_reduced_theta,
+}
 
 # --- Décorateur pour mesurer la durée des étapes ---
 def timed_step(name):
@@ -29,11 +37,11 @@ def run_edp():
 @timed_step("Simulation EDO (par défaut : solve_ivp)")
 def run_edo():
     from edo_methods import simulate_edo_ivp
-    simulate_edo_ivp(show_plots=False)
+    simulate_edo_ivp()
 
 @timed_step("Validation croisée EDO vs EDP")
 def run_validation():
-    validate_edo_edp(show_plot=True)
+    validate_edo_edp(show_plot=True, edp_dir="results")
 
 @timed_step("Validation croisée entre méthodes EDO")
 def run_cross_validation():
