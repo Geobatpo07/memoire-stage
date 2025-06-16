@@ -63,13 +63,13 @@ Les résultats sont sauvegardés dans le dossier `figures/` et intégrés automa
 - [x] Rédiger la page de garde
 - [x] Écrire l'introduction (`introduction.tex`)
 - [x] Décrire la théorie et le modèle (`theorie.tex`)
-- [ ] Générer les résultats numériques (`resultats.tex`)
-- [ ] Ajouter les figures de simulation
-- [ ] Rédiger la conclusion (`conclusion.tex`)
+- [x] Générer les résultats numériques (`resultats.tex`)
+- [x] Ajouter les figures de simulation
+- [x] Rédiger la conclusion (`conclusion.tex`)
 - [x] Compléter la bibliographie (`biblio.bib`)
-- [ ] Effectuer la relecture finale
-- [ ] Effectuer les corrections après retour de l'encadrant
-- [ ] Préparer la soutenance orale
+- [x] Effectuer la relecture finale
+- [x] Effectuer les corrections après retour de l'encadrant
+- [x] Préparer la soutenance orale
 
 ---
 
