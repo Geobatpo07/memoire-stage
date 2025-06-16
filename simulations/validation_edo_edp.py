@@ -17,29 +17,30 @@ def validate_edo_edp(edo_csv="edo_results.csv", pdf_output="validation_edo_edp_c
                     csv_output="validation_profiles.csv", show_plot=True, 
                     edp_dir=".", output_dir="results"):
     """
-    Validate the PDE model by comparing it to the analytical ODE profile.
+    Valider le modèle EDP en le comparant au profil analytique EDO.
 
-    This function loads ODE results from a CSV file and PDE simulation results,
-    computes radial profiles, and creates comparison plots and data.
+    Cette fonction charge les résultats EDO à partir d’un fichier CSV ainsi que les résultats
+    de la simulation EDP, calcule les profils radiaux et génère des graphiques et données
+    de comparaison.
 
     Args:
-        edo_csv (str, optional): Path to ODE results CSV file. Defaults to "edo_results.csv".
-        pdf_output (str, optional): Output PDF filename for comparison plot. Defaults to "validation_edo_edp_comparison.pdf".
-        csv_output (str, optional): Output CSV filename for validation data. Defaults to "validation_profiles.csv".
-        show_plot (bool, optional): Whether to display the plot. Defaults to True.
-        edp_dir (str, optional): Directory containing PDE field files. Defaults to current directory.
-        output_dir (str, optional): Directory to save output files. Defaults to "results".
+        edo_csv (str, optional): Chemin du fichier CSV contenant les résultats EDO. Par défaut "edo_results.csv".
+        pdf_output (str, optional): Nom du fichier PDF de sortie pour le graphique comparatif. Par défaut "validation_edo_edp_comparison.pdf".
+        csv_output (str, optional): Nom du fichier CSV de sortie pour les données de validation. Par défaut "validation_profiles.csv".
+        show_plot (bool, optional): Afficher ou non le graphique. Par défaut True.
+        edp_dir (str, optional): Répertoire contenant les fichiers de champs EDP. Par défaut le répertoire courant.
+        output_dir (str, optional): Répertoire pour enregistrer les fichiers de sortie. Par défaut "results".
 
     Returns:
-        bool: True if validation was successful, False otherwise
+        bool: True si la validation est réussie, False sinon.
     """
     try:
-        print("\nValidating PDE model against ODE profile...")
+        print("\nValidation du modèle EDP par rapport au profil EDO...")
 
-        # 1. Load ODE results
+        # 1. Charger les résultats EDO
         try:
             edo_data = pd.read_csv(edo_csv)
-            print(f"Loaded ODE data from {edo_csv}")
+            print(f"Données EDO chargées depuis {edo_csv}")
 
             xi_edo_km = edo_data["xi_km"].values
             a = edo_data["a_xi"].values
@@ -47,58 +48,58 @@ def validate_edo_edp(edo_csv="edo_results.csv", pdf_output="validation_edo_edp_c
             v_norm_edo = np.sqrt(a**2 + b**2)
 
         except Exception as e:
-            print(f"Error loading ODE data: {e}", file=sys.stderr)
-            print(f"Make sure the file {edo_csv} exists and contains the required columns.")
+            print(f"Erreur lors du chargement des données EDO : {e}", file=sys.stderr)
+            print(f"Assurez-vous que le fichier {edo_csv} existe et contient les colonnes requises.")
             return False
 
-        # 2. Load PDE fields
+        # 2. Charger les champs EDP
         try:
             u_sim, v_sim, x, y = load_edp_fields(directory=edp_dir)
-            print(f"Loaded PDE fields from {edp_dir}")
+            print(f"Champs EDP chargés depuis {edp_dir}")
 
-            # Create coordinate grid and compute distance from center
+            # Créer une grille de coordonnées et calculer la distance au centre
             X, Y = np.meshgrid(x, y)
             R = np.sqrt((X - X.mean())**2 + (Y - Y.mean())**2)
             v_norm_sim_grid = compute_velocity_norm(u_sim, v_sim)
 
         except Exception as e:
-            print(f"Error loading PDE fields: {e}", file=sys.stderr)
+            print(f"Erreur lors du chargement des champs EDP : {e}", file=sys.stderr)
             return False
 
-        # 3. Compute radial profile from PDE simulation
+        # 3. Calculer le profil radial à partir de la simulation EDP
         r_centers, v_norm_sim_profile = compute_radial_profile(R, v_norm_sim_grid)
-        r_centers_km = r_centers / 1000  # Convert to kilometers
+        r_centers_km = r_centers / 1000  # Conversion en kilomètres
 
-        # 4. Interpolate ODE profile to match PDE radial points
+        # 4. Interpoler le profil EDO pour correspondre aux points radiaux EDP
         try:
             interp_edo = interp1d(xi_edo_km, v_norm_edo, bounds_error=False, fill_value="extrapolate")
             v_norm_edo_interp = interp_edo(r_centers_km)
 
         except Exception as e:
-            print(f"Error in interpolation: {e}", file=sys.stderr)
+            print(f"Erreur lors de l'interpolation : {e}", file=sys.stderr)
             return False
 
-        # 5. Create and save comparison plot
+        # 5. Créer et enregistrer le graphique de comparaison
         os.makedirs(output_dir, exist_ok=True)
         pdf_path = os.path.join(output_dir, pdf_output)
 
         save_plot(
             x=r_centers_km,
             y_list=[v_norm_sim_profile, v_norm_edo_interp],
-            labels=["PDE Simulation", "ODE Theory"],
-            title="Cross-validation: Radial profile |v(ξ)| – ODE vs PDE",
-            xlabel="Distance from center ξ (km)",
-            ylabel="Velocity magnitude |v(ξ)| (m/s)",
+            labels=["Simulation EDP", "Théorie EDO"],
+            title="Validation croisée : Profil radial |v(ξ)| – EDO vs EDP",
+            xlabel="Distance au centre ξ (km)",
+            ylabel="Norme de la vitesse |v(ξ)| (m/s)",
             filename=pdf_output,
             styles=["--", "-"],
             show=show_plot,
             results_dir=output_dir
         )
 
-        # 6. Export profiles to CSV
+        # 6. Exporter les profils vers un fichier CSV
         csv_path = os.path.join(output_dir, csv_output)
 
-        # Calculate relative difference
+        # Calculer la différence relative
         with np.errstate(divide='ignore', invalid='ignore'):
             rel_diff = np.abs(v_norm_sim_profile - v_norm_edo_interp) / v_norm_edo_interp
             rel_diff = np.where(np.isfinite(rel_diff), rel_diff, np.nan)
@@ -112,52 +113,52 @@ def validate_edo_edp(edo_csv="edo_results.csv", pdf_output="validation_edo_edp_c
 
         export_dataframe(df, csv_path)
 
-        # Calculate validation metrics
+        # Calculer les métriques de validation
         valid_indices = ~np.isnan(rel_diff)
         if np.any(valid_indices):
-            mean_rel_diff = np.mean(rel_diff[valid_indices]) * 100  # as percentage
-            max_rel_diff = np.max(rel_diff[valid_indices]) * 100    # as percentage
+            mean_rel_diff = np.mean(rel_diff[valid_indices]) * 100  # en pourcentage
+            max_rel_diff = np.max(rel_diff[valid_indices]) * 100    # en pourcentage
 
-            print("\nValidation metrics:")
-            print(f"  - Mean relative difference: {mean_rel_diff:.2f}%")
-            print(f"  - Maximum relative difference: {max_rel_diff:.2f}%")
+            print("\nMétriques de validation :")
+            print(f"  - Différence relative moyenne : {mean_rel_diff:.2f}%")
+            print(f"  - Différence relative maximale : {max_rel_diff:.2f}%")
 
-        print("\nODE-PDE validation completed successfully.")
-        print(f"  - Comparison plot: {pdf_path}")
-        print(f"  - Validation data: {csv_path}")
+        print("\nValidation EDO-EDP terminée avec succès.")
+        print(f"  - Graphique de comparaison : {pdf_path}")
+        print(f"  - Données de validation : {csv_path}")
 
         return True
 
     except Exception as e:
-        print(f"Error in ODE-PDE validation: {e}", file=sys.stderr)
+        print(f"Erreur dans la validation EDO-EDP : {e}", file=sys.stderr)
         return False
 
 
 def main():
     """
-    Main function for the ODE-PDE validation command-line interface.
+    Fonction principale pour l’interface en ligne de commande de validation EDO-EDP.
     """
     parser = argparse.ArgumentParser(
-        description="Validate PDE model against analytical ODE profile",
+        description="Valider le modèle EDP par rapport au profil analytique EDO",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     parser.add_argument("--ode-csv", type=str, default="edo_results.csv",
-                       help="Path to ODE results CSV file")
+                       help="Chemin du fichier CSV contenant les résultats EDO")
     parser.add_argument("--pdf-output", type=str, default="validation_edo_edp_comparison.pdf",
-                       help="Output PDF filename for comparison plot")
+                       help="Nom du fichier PDF de sortie pour le graphique")
     parser.add_argument("--csv-output", type=str, default="validation_profiles.csv",
-                       help="Output CSV filename for validation data")
+                       help="Nom du fichier CSV de sortie pour les données de validation")
     parser.add_argument("--no-show", action="store_true",
-                       help="Don't display the plot")
+                       help="Ne pas afficher le graphique")
     parser.add_argument("--edp-dir", type=str, default=".",
-                       help="Directory containing PDE field files")
+                       help="Répertoire contenant les fichiers de champs EDP")
     parser.add_argument("--output-dir", type=str, default="results",
-                       help="Directory to save output files")
+                       help="Répertoire où enregistrer les fichiers de sortie")
 
     args = parser.parse_args()
 
-    # Run validation
+    # Exécuter la validation
     success = validate_edo_edp(
         edo_csv=args.ode_csv,
         pdf_output=args.pdf_output,

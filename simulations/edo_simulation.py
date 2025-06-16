@@ -1,15 +1,22 @@
 import argparse
 import sys
+import os
+
 from edo_methods import (
     simulate_edo_ivp,
     simulate_edo_ivp_bdf,
     simulate_edo_euler_backward,
     simulate_edo_reduced_theta
 )
-from utils import save_edo_result, save_plot
+from utils import (
+    save_edo_result,
+    save_plot,
+    generate_velocity_fields_from_edo,
+    get_versioned_filename
+)
 
-# Available ODE solution methods
-METHODS = {
+# Méthodes disponibles
+METHODES = {
     "ivp": simulate_edo_ivp,
     "bdf": simulate_edo_ivp_bdf,
     "euler": simulate_edo_euler_backward,
@@ -18,110 +25,93 @@ METHODS = {
 
 
 def main():
-    """
-    Main function for the ODE simulation command-line interface.
-
-    This function parses command-line arguments, runs the selected ODE solution
-    method, saves the results, and optionally generates plots.
-    """
-    # Set up command-line argument parser
     parser = argparse.ArgumentParser(
-        description="Cyclone ODE system simulation",
+        description="Simulation du système d’EDO pour le cyclone",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    # Add command-line arguments
-    parser.add_argument(
-        "--method", 
-        choices=METHODS.keys(), 
-        default="ivp",
-        help="Solution method to use"
-    )
-    parser.add_argument(
-        "--output", 
-        type=str, 
-        default="edo_results.csv",
-        help="Output CSV filename"
-    )
-    parser.add_argument(
-        "--show", 
-        action="store_true", 
-        help="Display figures"
-    )
-    parser.add_argument(
-        "--params", 
-        type=str, 
-        help="Additional parameters in format 'key1=value1,key2=value2,...'"
-    )
+    parser.add_argument("--method", choices=METHODES.keys(), default="ivp",
+                        help="Méthode de résolution à utiliser")
+    parser.add_argument("--output", type=str, default="../results",
+                        help="Nom du dossier de sortie")
+    parser.add_argument("--show", action="store_true",
+                        help="Afficher les figures")
+    parser.add_argument("--params", type=str,
+                        help="Paramètres supplémentaires au format 'clé1=valeur1,clé2=valeur2,...'")
 
-    # Parse arguments
     args = parser.parse_args()
 
     try:
-        # Parse additional parameters if provided
+        print(f"\nMéthode EDO sélectionnée : {args.method}")
+
+        # Paramètres supplémentaires
         extra_params = {}
         if args.params:
             for param in args.params.split(','):
                 key, value = param.split('=')
-                # Try to convert to appropriate type
                 try:
-                    # Try as int
                     extra_params[key] = int(value)
                 except ValueError:
                     try:
-                        # Try as float
                         extra_params[key] = float(value)
                     except ValueError:
-                        # Keep as string
                         extra_params[key] = value
 
-        # Run the selected method
-        print(f"\nRunning ODE simulation with method: {args.method}")
-        result = METHODS[args.method](**extra_params)
+        # Exécution de la simulation
+        result = METHODES[args.method](**extra_params)
 
-        # Save results
-        save_edo_result(result, args.output)
-        print(f"Results saved to {args.output}")
+        if not isinstance(result, dict) or "xi_km" not in result or len(result["xi_km"]) == 0:
+            print("Aucune donnée — a(ξ) est probablement devenu négatif prématurément.")
+            return
 
-        # Generate plots if requested
+        # Déterminer le fichier CSV versionné
+        results_dir = os.path.dirname(args.output) or "."
+        base_csv_name = f"edo_results_{args.method}.csv"
+        versioned_csv = get_versioned_filename(results_dir, base_csv_name)
+
+        # Sauvegarder les résultats CSV
+        save_edo_result(result, versioned_csv)
+        print(f"Résultats enregistrés : {versioned_csv}")
+
+        # Génération des champs vectoriels et sauvegarde des .npy
+        generate_velocity_fields_from_edo(result, output_dir=results_dir)
+
+        # Graphiques si demandé
         if args.show:
-            # Velocity components plot
             save_plot(
-                result["xi_km"], 
+                result["xi_km"],
                 [result["a_xi"], result["b_xi"]],
-                labels=["a(ξ) (radial)", "b(ξ) (tangential)"],
-                title="Velocity Components", 
+                labels=["a(ξ) (radiale)", "b(ξ) (tangentielle)"],
+                title="Composantes de vitesse",
                 xlabel="ξ (km)",
-                ylabel="Velocity (m/s)", 
-                filename="edo_ab_components.pdf"
+                ylabel="Vitesse (m/s)",
+                filename=get_versioned_filename(args.output, f"edo_ab_components_{args.method}.png")
             )
 
-            # Geostrophic factor plot
             save_plot(
-                result["xi_km"], 
-                [result["theta_xi"]], 
-                ["θ(ξ)"],
-                title="Geostrophic Factor", 
+                result["xi_km"],
+                [result["theta_xi"]],
+                labels=["θ(ξ)"],
+                title="Facteur géostrophique",
                 xlabel="ξ (km)",
-                ylabel="θ(ξ)", 
-                filename="edo_theta.pdf"
+                ylabel="θ(ξ)",
+                filename=get_versioned_filename(args.output, f"edo_theta_{args.method}.png")
             )
 
-            # Kinetic energy plot
             save_plot(
-                result["xi_km"], 
-                [result["E_xi"]], 
-                ["Kinetic Energy"],
-                title="Kinetic Energy", 
+                result["xi_km"],
+                [result["E_xi"]],
+                labels=["Énergie cinétique"],
+                title="Énergie cinétique du vent",
                 xlabel="ξ (km)",
-                ylabel="E(ξ)", 
-                filename="edo_energy.pdf"
+                ylabel="E(ξ)",
+                filename=get_versioned_filename(args.output, f"edo_energy_{args.method}.png")
             )
 
-            print("Plots generated successfully")
+            print("Graphiques générés avec succès")
 
     except Exception as e:
-        print(f"Error in ODE simulation: {e}", file=sys.stderr)
+        print(f"Erreur lors de la simulation EDO : {e}", file=sys.stderr)
         sys.exit(1)
 
 

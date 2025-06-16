@@ -4,127 +4,112 @@ import argparse
 from utils import display_series_info, extract_order_equations
 
 
-def define_symbols():
+def definir_symboles():
     """
-    Define symbolic variables for the asymptotic analysis.
+    Définir les variables symboliques pour l’analyse asymptotique.
 
-    Returns:
-        tuple: Symbolic variables (xi, xim, delta, alpha, beta, w0, phi, k, xi_star)
+    Retourne :
+        tuple : Variables symboliques (xi, xim, delta, alpha, beta, w0, phi, k, xi_star)
     """
-    # Spatial variables
-    xi, xim = sp.symbols('xi xim', real=True)
-    delta = xi - xim  # Expansion variable
+    # Variables spatiales
+    xi, xim = sp.symboles('xi xim', réel=True)
+    delta = xi - xim  # Variable de développement
 
-    # Taylor series coefficients
-    alpha = sp.symbols('alpha1 alpha2 alpha3', real=True)  # For a(xi)
-    beta = sp.symbols('beta0 beta1 beta2', real=True)      # For b(xi)
+    # Coefficients de la série de Taylor
+    alpha = sp.symboles('alpha1 alpha2 alpha3', réel=True)  # Pour a(xi)
+    beta = sp.symboles('beta0 beta1 beta2', réel=True)      # Pour b(xi)
 
-    # Physical parameters
-    w0, phi = sp.symbols('w0 phi', real=True, positive=True)  # Earth rotation and latitude
-    k, xi_star = sp.symbols('k xi_star', real=True, positive=True)  # Friction and absorption
+    # Paramètres physiques
+    w0, phi = sp.symboles('w0 phi', réel=True, positif=True)  # Rotation terrestre et latitude
+    k, xi_star = sp.symboles('k xi_star', réel=True, positif=True)  # Friction et absorption
 
     return xi, xim, delta, alpha, beta, w0, phi, k, xi_star
 
 
-def define_taylor_series(delta, alpha, beta):
+def definir_series_taylor(delta, alpha, beta):
     """
-    Define Taylor series expansions for velocity components.
+    Définir les développements de Taylor pour les composantes de vitesse.
 
-    Args:
-        delta (sympy.Symbol): Expansion variable (xi - xim)
-        alpha (list): Coefficients for radial velocity expansion
-        beta (list): Coefficients for tangential velocity expansion
+    Arguments :
+        delta (sympy.Symbol) : Variable de développement (xi - xim)
+        alpha (liste) : Coefficients pour a(xi)
+        beta (liste) : Coefficients pour b(xi)
 
-    Returns:
-        tuple: (a, b) Taylor series for radial and tangential velocities
+    Retourne :
+        tuple : (a, b) séries de Taylor pour les vitesses radiale et tangentielle
     """
-    # Radial velocity a(xi) = alpha1*delta + alpha2*delta^2 + alpha3*delta^3
     a = alpha[0]*delta + alpha[1]*delta**2 + alpha[2]*delta**3
-
-    # Tangential velocity b(xi) = beta0 + beta1*delta + beta2*delta^2
     b = beta[0] + beta[1]*delta + beta[2]*delta**2
-
     return a, b
 
 
-def define_edo_equations(xi, a, b, a_prime, b_prime, w0, phi, k, xi_star):
+def definir_equations_edo(xi, a, b, a_prime, b_prime, w0, phi, k, xi_star):
     """
-    Define the ODE system equations in symbolic form.
+    Définir les équations du système EDO sous forme symbolique.
 
-    Args:
-        xi (sympy.Symbol): Radial coordinate
-        a, b (sympy.Expr): Radial and tangential velocity expressions
-        a_prime, b_prime (sympy.Expr): Derivatives of a and b
-        w0, phi, k, xi_star (sympy.Symbol): Physical parameters
+    Arguments :
+        xi (sympy.Symbol) : Coordonnée radiale
+        a, b (sympy.Expr) : Expressions des vitesses radiale et tangentielle
+        a_prime, b_prime (sympy.Expr) : Dérivées de a et b
+        w0, phi, k, xi_star (sympy.Symbol) : Paramètres physiques
 
-    Returns:
-        tuple: (eq1, eq2) Expanded equations
+    Retourne :
+        tuple : (eq1, eq2) équations développées
     """
-    # First equation (radial momentum)
     eq1 = a * a_prime * xi + a**2 - b**2 - ((xi_star - k)*a + w0*sp.sin(phi)*b)
-
-    # Second equation (tangential momentum)
     eq2 = a * b_prime * xi + 2*a*b - ((xi_star - k)*b - w0*sp.sin(phi)*a)
 
-    # Expand the equations to collect terms
     return eq1.expand(), eq2.expand()
 
 
-def asymptotic_analysis(n=4, save_to_file=None):
+def analyse_asymptotique(n=4, save_to_file=None):
     """
-    Perform asymptotic analysis of the cyclone ODE system.
+    Effectue l’analyse asymptotique du système EDO de cyclone.
 
-    This function expands the ODE system in a Taylor series around xi = xim
-    and extracts equations at different orders.
+    Cette fonction développe le système en série de Taylor autour de xi = xim
+    et extrait les équations aux ordres successifs.
 
-    Args:
-        n (int, optional): Maximum order of expansion. Defaults to 4.
-        save_to_file (str, optional): File to save results. Defaults to None.
+    Arguments :
+        n (int, optionnel) : Ordre maximal du développement. Par défaut 4.
+        save_to_file (str, optionnel) : Nom de fichier pour sauvegarder. Par défaut None.
 
-    Returns:
-        list: Equations at orders 0 to 2 for both momentum equations
+    Retourne :
+        list : Équations aux ordres 0 à 2 pour les deux équations de quantité de mouvement.
     """
     try:
-        # Redirect output to file if specified
         original_stdout = sys.stdout
         if save_to_file:
             sys.stdout = open(save_to_file, 'w')
 
-        print("\n Asymptotic analysis near ξ = ξ_m\n")
+        print("\n Analyse asymptotique au voisinage de ξ = ξ_m\n")
 
-        # Define symbols and series
-        xi, xim, delta, alpha, beta, w0, phi, k, xi_star = define_symbols()
-        a, b = define_taylor_series(delta, alpha, beta)
+        xi, xim, delta, alpha, beta, w0, phi, k, xi_star = definir_symboles()
+        a, b = definir_series_taylor(delta, alpha, beta)
 
-        # Calculate derivatives
         a_prime = sp.diff(a, xi)
         b_prime = sp.diff(b, xi)
 
-        # Define and expand equations
-        eq1, eq2 = define_edo_equations(xi, a, b, a_prime, b_prime, w0, phi, k, xi_star)
+        eq1, eq2 = definir_equations_edo(xi, a, b, a_prime, b_prime, w0, phi, k, xi_star)
 
-        # Series expansion in delta
         eq1_series = eq1.series(delta, n=n).removeO()
         eq2_series = eq2.series(delta, n=n).removeO()
 
-        # Display results
-        print(" Equation 1 expanded:")
+        print(" Équation 1 développée :")
         display_series_info(eq1_series, delta)
 
-        print("\n Equation 2 expanded:")
+        print("\n Équation 2 développée :")
         display_series_info(eq2_series, delta)
 
-        print("\n Equations at orders 0 to 2:")
+        print("\n Équations aux ordres 0 à 2 :")
         eqs_0_2 = extract_order_equations([eq1_series, eq2_series], delta, orders=[0, 1, 2])
         for i, eq in enumerate(eqs_0_2):
-            print(f"\n— Equation {i//3 + 1}, order {i%3} —")
+            print(f"\n— Équation {i//3 + 1}, ordre {i%3} —")
             sp.pprint(sp.Eq(eq, 0))
 
-        # Restore stdout if needed
         if save_to_file:
             sys.stdout.close()
             sys.stdout = original_stdout
-            print(f"Analysis results saved to {save_to_file}")
+            print(f"Résultats enregistrés dans {save_to_file}")
 
         return eqs_0_2
 
@@ -132,27 +117,27 @@ def asymptotic_analysis(n=4, save_to_file=None):
         if save_to_file and sys.stdout != original_stdout:
             sys.stdout.close()
             sys.stdout = original_stdout
-        print(f"Error in asymptotic analysis: {e}", file=sys.stderr)
+        print(f"Erreur lors de l’analyse asymptotique : {e}", file=sys.stderr)
         return []
 
 
 def main():
     """
-    Main function for the asymptotic analysis command-line interface.
+    Fonction principale pour exécuter l’analyse depuis la ligne de commande.
     """
     parser = argparse.ArgumentParser(
-        description="Asymptotic analysis of cyclone ODE system",
+        description="Analyse asymptotique du système EDO de cyclone",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     parser.add_argument("--order", type=int, default=4,
-                       help="Maximum order of expansion")
+                       help="Ordre maximal du développement")
     parser.add_argument("--output", type=str, default=None,
-                       help="File to save results")
+                       help="Fichier de sortie pour les résultats")
 
     args = parser.parse_args()
 
-    asymptotic_analysis(n=args.order, save_to_file=args.output)
+    analyse_asymptotique(n=args.order, save_to_file=args.output)
 
 
 if __name__ == "__main__":

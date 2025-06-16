@@ -4,235 +4,162 @@ from scipy.integrate import solve_ivp
 from utils import export_dataframe, format_edo_solution, save_edo_result
 
 
-def simulate_edo_ivp(N=1000, xi0=1e4, Rext=3e5, theta0=2e-4,
-                     w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5, method="RK45"):
+def simulate_edo_ivp(N=1000, xi0=1e4, Rext=3e5, theta0=2e-4, w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5, method="RK45"):
     """
-    Simulate the cyclone ODE system using SciPy's solve_ivp.
+    Simule le système d’EDO du cyclone à l’aide de solve_ivp de SciPy.
 
-    Args:
-        N (int, optional): Number of evaluation points. Defaults to 1000.
-        xi0 (float, optional): Inner radius (m). Defaults to 1e4.
-        Rext (float, optional): Outer radius (m). Defaults to 3e5.
-        theta0 (float, optional): Initial geostrophic factor. Defaults to 2e-4.
-        w0 (float, optional): Earth's rotation rate (rad/s). Defaults to 7.2921e-5.
-        phi_deg (float, optional): Latitude in degrees. Defaults to 20.
-        k (float, optional): Friction coefficient. Defaults to 1e-5.
-        xi_star (float, optional): Absorption coefficient. Defaults to 5e-5.
-        method (str, optional): Integration method. Defaults to "RK45".
-
-    Returns:
-        dict: Dictionary containing the solution and derived quantities
+    Retour :
+        dict : Dictionnaire contenant la solution et les grandeurs dérivées.
     """
-    # Convert latitude to radians
     phi_star = np.radians(phi_deg)
-
-    # Create evaluation points (from inner to outer radius)
     xi_eval = np.linspace(xi0, Rext, N)
 
-    # Initial conditions at the outer radius
-    a_R = 1e-6  # Small initial radial velocity
-    b_R = -theta0 * a_R  # Initial tangential velocity
+    a_R = -1e-6  # Négatif : flux radial entrant
+    b_R = theta0 * abs(a_R)  # Positif : rotation cyclonique
 
     def system(xi, y):
-        """
-        Define the ODE system.
-
-        Args:
-            xi (float): Radial coordinate (independent variable)
-            y (list): State vector [a, b]
-
-        Returns:
-            list: Derivatives [da/dxi, db/dxi]
-        """
         a, b = y
-
-        # Avoid division by zero
         if np.abs(a) < 1e-10:
             return [0, 0]
-
-        # System equations
         da = ((xi_star - k)*a + w0*np.sin(phi_star)*b - a**2 + b**2) / (xi * a)
         db = ((xi_star - k)*b - w0*np.sin(phi_star)*a - 2*a*b) / (xi * a)
-
         return [da, db]
 
+    def stop_when_a_positive(xi, y):
+        return y[0]
+    stop_when_a_positive.terminal = True
+    stop_when_a_positive.direction = 1
+
     try:
-        # Solve the system (note: integration is from Rext to xi0, so we reverse the arrays)
         sol = solve_ivp(
-            system, 
-            [Rext, xi0],  # Integration bounds (from outer to inner)
-            [a_R, b_R],   # Initial conditions at outer radius
-            t_eval=xi_eval[::-1],  # Evaluation points (reversed)
-            method=method
+            system,
+            [Rext, xi0],
+            [a_R, b_R],
+            t_eval=xi_eval[::-1],
+            method=method,
+            events=stop_when_a_positive
         )
 
-        # Format the solution (reversing arrays to go from inner to outer)
-        return format_edo_solution(sol.t[::-1], sol.y[0][::-1], sol.y[1][::-1])
+        if sol.status == 1:
+            print(f"Intégration stoppée automatiquement : a(ξ) est devenu négatif à ξ = {sol.t[-1]:.2f} m")
 
+        return format_edo_solution(sol.t[::-1], sol.y[0][::-1], sol.y[1][::-1])
     except Exception as e:
-        print(f"Error in ODE integration ({method}): {e}")
-        # Return empty arrays of correct size in case of error
+        print(f"Erreur lors de l'intégration de l'EDO ({method}) : {e}")
         empty = np.zeros(N)
         return format_edo_solution(xi_eval, empty, empty)
 
 
 def simulate_edo_ivp_bdf(**kwargs):
     """
-    Simulate the cyclone ODE system using the BDF (implicit) method.
+    Simule le système d’EDO du cyclone avec la méthode BDF (implicite), en arrêtant
+    la simulation si a devient positif.
 
-    Args:
-        **kwargs: Arguments to pass to simulate_edo_ivp
+    Arguments :
+        **kwargs : Arguments à transmettre à simulate_edo_ivp.
 
-    Returns:
-        dict: Dictionary containing the solution and derived quantities
+    Retour :
+        dict : Résultats de la simulation.
     """
     return simulate_edo_ivp(method="BDF", **kwargs)
 
 
-def simulate_edo_euler_backward(N=1000, xi0=1e4, Rext=3e5, theta0=2e-4,
-                                w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5):
+def simulate_edo_euler_backward(N=1000, xi0=1e4, Rext=3e5, theta0=2e-4, w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5):
     """
-    Simulate the cyclone ODE system using an explicit backward Euler method.
+    Simule le système d’EDO du cyclone avec une méthode d’Euler explicite inversée.
+    Interrompt la simulation si a devient positif.
 
-    This method integrates from the outer radius (Rext) to the inner radius (xi0)
-    using a custom explicit scheme.
-
-    Args:
-        N (int, optional): Number of grid points. Defaults to 1000.
-        xi0 (float, optional): Inner radius (m). Defaults to 1e4.
-        Rext (float, optional): Outer radius (m). Defaults to 3e5.
-        theta0 (float, optional): Initial geostrophic factor. Defaults to 2e-4.
-        w0 (float, optional): Earth's rotation rate (rad/s). Defaults to 7.2921e-5.
-        phi_deg (float, optional): Latitude in degrees. Defaults to 20.
-        k (float, optional): Friction coefficient. Defaults to 1e-5.
-        xi_star (float, optional): Absorption coefficient. Defaults to 5e-5.
-
-    Returns:
-        dict: Dictionary containing the solution and derived quantities
+    Retour :
+        dict : Résultats de la simulation.
     """
     try:
-        # Convert latitude to radians
         phi_star = np.radians(phi_deg)
-
-        # Grid spacing
         h = (Rext - xi0) / N
-
-        # Create grid points (from outer to inner radius)
         xi = np.linspace(Rext, xi0, N)
 
-        # Initialize solution arrays
         a = np.zeros(N)
         b = np.zeros(N)
         theta = np.zeros(N)
 
-        # Initial conditions at the outer radius
-        a[0] = 1e-6  # Small initial radial velocity
-        b[0] = -theta0 * a[0]  # Initial tangential velocity
-        theta[0] = theta0  # Initial geostrophic factor
+        a[0] = -1e-6
+        b[0] = theta0 * abs(a[0])
+        theta[0] = theta0
 
-        # Backward Euler integration
         for j in range(1, N):
             xi_j = xi[j]
             a_prev, b_prev = a[j-1], b[j-1]
             theta_prev = theta[j-1]
 
-            # Update tangential velocity component
-            b[j] = (xi[j-1]*b_prev - w0*np.sin(phi_star)*h + b_prev*h + 
+            b[j] = (xi[j-1]*b_prev - w0*np.sin(phi_star)*h + b_prev*h +
                    (xi_star - k)*theta_prev*h) / xi_j
 
-            # Update radial velocity component
-            a[j] = (xi[j-1]*a_prev - theta_prev**2 * a_prev*h - 
+            a[j] = (xi[j-1]*a_prev - theta_prev**2 * a_prev*h -
                    (xi_star - k)*h + w0*np.sin(phi_star)*theta_prev*h) / xi_j
 
-            # Update geostrophic factor with division by zero check
+            if a[j] > 0:
+                print(f"Arrêt de la simulation : a({xi_j/1000:.2f} km) > 0")
+                return format_edo_solution(xi[:j+1][::-1], a[:j+1][::-1], b[:j+1][::-1])
+
             theta[j] = -b[j]/a[j] if abs(a[j]) > 1e-10 else 0.0
 
-        # Format the solution (reversing arrays to go from inner to outer)
         return format_edo_solution(xi[::-1], a[::-1], b[::-1])
 
     except Exception as e:
-        print(f"Error in backward Euler integration: {e}")
-        # Return empty arrays of correct size in case of error
+        print(f"Erreur dans l'intégration par Euler inversé : {e}")
         empty = np.zeros(N)
         return format_edo_solution(np.linspace(xi0, Rext, N), empty, empty)
 
 
 def simulate_edo_reduced_theta(N=1000, xi0=1e4, Rext=3e5, theta0=2e-4,
-                              w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5):
+                                w0=7.2921e-5, phi_deg=20, k=1e-5, xi_star=5e-5):
     """
-    Simulate the cyclone ODE system using a reduced form with a(xi) and theta(xi).
-
-    This method uses a different formulation of the equations in terms of
-    the radial velocity a and the geostrophic factor theta.
-
-    Args:
-        N (int, optional): Number of evaluation points. Defaults to 1000.
-        xi0 (float, optional): Inner radius (m). Defaults to 1e4.
-        Rext (float, optional): Outer radius (m). Defaults to 3e5.
-        theta0 (float, optional): Initial geostrophic factor. Defaults to 2e-4.
-        w0 (float, optional): Earth's rotation rate (rad/s). Defaults to 7.2921e-5.
-        phi_deg (float, optional): Latitude in degrees. Defaults to 20.
-        k (float, optional): Friction coefficient. Defaults to 1e-5.
-        xi_star (float, optional): Absorption coefficient. Defaults to 5e-5.
-
-    Returns:
-        dict: Dictionary containing the solution and derived quantities
+    Simule le système d’EDO dans une version réduite avec a(xi) et θ(xi).
+    Interrompt la simulation si a devient positif ou trop proche de zéro.
     """
     try:
-        # Convert latitude to radians
         phi_star = np.radians(phi_deg)
-
-        # Create evaluation points (from inner to outer radius)
         xi_eval = np.linspace(xi0, Rext, N)
 
-        # Initial conditions at the outer radius
-        a_R = 1e-6  # Small initial radial velocity
-        theta_R = theta0  # Initial geostrophic factor
+        a_R = -1e-6
+        theta_R = theta0
 
         def reduced_system(xi, y):
-            """
-            Define the reduced ODE system in terms of a and theta.
-
-            Args:
-                xi (float): Radial coordinate (independent variable)
-                y (list): State vector [a, theta]
-
-            Returns:
-                list: Derivatives [d(a)/dxi, d(theta)/dxi]
-            """
             a, theta = y
-
-            # Avoid division by zero and numerical instabilities
-            if np.abs(a) < 1e-10 or abs(theta**2 - 1) < 1e-10:
+            # Tolérance légèrement plus souple
+            if np.abs(a) < 1e-8 or abs(theta**2 - 1) < 1e-8:
                 return [0, 0]
-
-            # System equations
             da = ((xi_star - k) + w0*np.sin(phi_star)*theta) / (xi * (1 - theta**2)) - 2*a/xi
             dtheta = (w0*np.sin(phi_star)/a - theta) * (1 + theta**2)
-
             return [da * a, dtheta]
 
-        # Solve the system (note: integration is from Rext to xi0, so we reverse the arrays)
+        def stop_if_a_positive(xi, y):
+            return -y[0]  # s’arrête si a > 0
+        stop_if_a_positive.terminal = True
+        stop_if_a_positive.direction = -1
+
         sol = solve_ivp(
-            reduced_system, 
-            [Rext, xi0],  # Integration bounds (from outer to inner)
-            [a_R, theta_R],  # Initial conditions at outer radius
-            t_eval=xi_eval[::-1],  # Evaluation points (reversed)
+            reduced_system,
+            [Rext, xi0],
+            [a_R, theta_R],
+            t_eval=xi_eval[::-1],
+            events=stop_if_a_positive,
             method="RK45"
         )
 
-        # Extract and reverse solution components
+        if sol.status == 1:
+            print(f"Intégration stoppée automatiquement : a(ξ) est devenu positif à ξ = {sol.t[-1]:.2f} m")
+
+        if sol.t.size == 0 or sol.y.shape[1] == 0:
+            print("Aucune donnée enregistrée — la simulation a échoué dès le début.")
+            return format_edo_solution(xi_eval, np.zeros(N), np.zeros(N))
+
         a_sol = sol.y[0][::-1]
         theta_sol = sol.y[1][::-1]
-
-        # Calculate tangential velocity from geostrophic factor
         b_sol = -theta_sol * a_sol
 
-        # Format the solution
         return format_edo_solution(sol.t[::-1], a_sol, b_sol)
 
     except Exception as e:
-        print(f"Error in reduced theta integration: {e}")
-        # Return empty arrays of correct size in case of error
+        print(f"Erreur dans l'intégration avec theta réduit : {e}")
         empty = np.zeros(N)
         return format_edo_solution(xi_eval, empty, empty)

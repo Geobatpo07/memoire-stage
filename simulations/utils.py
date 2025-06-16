@@ -259,7 +259,7 @@ def plot_quiver_field(X, Y, u, v, scale=50, skip=5, title="Wind Field", savepath
         savepath (str, optional): Path to save the plot. If None, the plot is displayed.
     """
     try:
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(12, 12))
         plt.quiver(X[::skip, ::skip]/1000, Y[::skip, ::skip]/1000, 
                   u[::skip, ::skip], v[::skip, ::skip], scale=scale)
         plt.title(title)
@@ -370,16 +370,64 @@ def format_edo_solution(xi_m, a_sol, b_sol):
     }
 
 
-def save_edo_result(result_dict, filename):
+def save_edo_result(result_dict, output_csv):
     """
-    Save ODE results to a CSV file.
+    Enregistre les résultats EDO dans un fichier CSV.
+    """
+    df = pd.DataFrame({
+        "xi_km": result_dict["xi_km"],
+        "a_xi": result_dict["a_xi"],
+        "b_xi": result_dict["b_xi"],
+        "theta_xi": result_dict["theta_xi"],
+        "E_xi": result_dict["E_xi"]
+    })
+    df.to_csv(output_csv, index=False)
+    print(f"Data exported: {output_csv}")
 
-    Args:
-        result_dict (dict): Dictionary with ODE solution data
-        filename (str): Output filename
+
+def generate_velocity_fields_from_edo(result, output_dir="results"):
     """
-    try:
-        df = pd.DataFrame(result_dict)
-        export_dataframe(df, filename)
-    except Exception as e:
-        print(f"Error saving ODE results: {e}")
+    Génére les champs U(x,y), V(x,y), X, Y à partir des composantes radiales et tangentielles
+    a(ξ) et b(ξ) et les enregistre dans des fichiers versionnés.
+
+    Paramètres :
+        result (dict) : Résultat retourné par simulate_edo_...
+        output_dir (str) : Dossier de sortie pour enregistrer les .npy
+    """
+    a_xi = np.array(result["a_xi"])
+    b_xi = np.array(result["b_xi"])
+    xi = np.array(result["xi_km"])
+
+    if len(xi) == 0 or len(a_xi) == 0 or len(b_xi) == 0:
+        print("Impossible de générer les champs vectoriels : données incomplètes.")
+        return
+
+    N = len(xi)
+    r = xi  # ξ représente la distance radiale
+    theta = np.linspace(0, 2 * np.pi, N)
+
+    R, T = np.meshgrid(r, theta, indexing='ij')  # (N, N)
+
+    # Composantes dans le repère polaire
+    A = np.tile(a_xi[:, np.newaxis], (1, N))  # a(ξ)
+    B = np.tile(b_xi[:, np.newaxis], (1, N))  # b(ξ)
+
+    # Coordonnées cartésiennes (X, Y) à partir de (R, T)
+    X = R * np.cos(T)
+    Y = R * np.sin(T)
+
+    # Calcul des composantes dans le repère cartésien
+    U = A * X / R - B * Y / R
+    V = A * Y / R + B * X / R
+
+    # Gestion des divisions par zéro
+    U = np.nan_to_num(U)
+    V = np.nan_to_num(V)
+
+    # Versionnement et sauvegarde
+    for name, field in zip(['u_field', 'v_field', 'x_grid', 'y_grid'], [U, V, X, Y]):
+        versioned_name = get_versioned_filename(output_dir, f"{name}.npy")
+        np.save(versioned_name, field)
+        print(f"Field saved: {versioned_name}")
+
+    print(f"Champs vectoriels 2D sauvegardés dans {output_dir}/")

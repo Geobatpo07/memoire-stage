@@ -8,7 +8,7 @@ from edo_simulation import main as run_edo_cli
 from validation_edo_edp import validate_edo_edp
 from edo_methods import simulate_edo_ivp, simulate_edo_ivp_bdf, simulate_edo_euler_backward, simulate_edo_reduced_theta
 
-# Define methods dictionary similar to what was in edo_validation_cross
+# Dictionnaire des méthodes EDO disponibles
 edo_methods = {
     "ivp": simulate_edo_ivp,
     "bdf": simulate_edo_ivp_bdf,
@@ -16,7 +16,7 @@ edo_methods = {
     "theta": simulate_edo_reduced_theta,
 }
 
-# --- Décorateur pour mesurer la durée des étapes ---
+# --- Décorateur pour mesurer la durée d'exécution ---
 def timed_step(name):
     def decorator(func):
         @wraps(func)
@@ -36,7 +36,6 @@ def run_edp():
 
 @timed_step("Simulation EDO (par défaut : solve_ivp)")
 def run_edo():
-    from edo_methods import simulate_edo_ivp
     simulate_edo_ivp()
 
 @timed_step("Validation croisée EDO vs EDP")
@@ -45,9 +44,9 @@ def run_validation():
 
 @timed_step("Validation croisée entre méthodes EDO")
 def run_cross_validation():
-    import edo_validation_cross
+    import edo_validation_cross  # L'import déclenche l'exécution
 
-# --- Fonction principale orchestrant le pipeline ---
+# --- Fonction principale du pipeline ---
 def main(args):
     selected = [args.edp, args.edo, args.validate, args.cross]
     if not any(selected):
@@ -56,7 +55,7 @@ def main(args):
             (run_edp, "EDP"),
             (run_edo, "EDO"),
             (run_validation, "Validation EDO/EDP"),
-            (run_cross_validation, "Cross-validation EDO")
+            (run_cross_validation, "Validation croisée EDO")
         ], total=4, desc="Étapes du pipeline", ncols=80):
             task()
     else:
@@ -69,12 +68,12 @@ def main(args):
         if args.cross:
             run_cross_validation()
 
-# --- Interface ligne de commande ---
+# --- Interface en ligne de commande ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pipeline de simulation de cyclone : EDP + EDO + validation.")
-    parser.add_argument("--edp", action="store_true", help="Exécute uniquement la simulation EDP")
-    parser.add_argument("--edo", action="store_true", help="Exécute uniquement la simulation EDO")
-    parser.add_argument("--validate", action="store_true", help="Exécute uniquement la validation croisée EDO/EDP")
-    parser.add_argument("--cross", action="store_true", help="Exécute la comparaison entre les méthodes EDO")
+    parser.add_argument("--edp", action="store_true", help="Exécuter uniquement la simulation EDP")
+    parser.add_argument("--edo", action="store_true", help="Exécuter uniquement la simulation EDO")
+    parser.add_argument("--validate", action="store_true", help="Exécuter uniquement la validation croisée EDO/EDP")
+    parser.add_argument("--cross", action="store_true", help="Exécuter la comparaison entre les méthodes EDO")
     args = parser.parse_args()
     main(args)
