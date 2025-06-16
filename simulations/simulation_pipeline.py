@@ -71,9 +71,8 @@ def main(args):
 # --- Interface en ligne de commande ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pipeline de simulation de cyclone : EDP + EDO + validation.")
-    parser.add_argument("--edp", action="store_true", help="Exécuter uniquement la simulation EDP")
     parser.add_argument("--edo", action="store_true", help="Exécuter uniquement la simulation EDO")
-    parser.add_argument("--validate", action="store_true", help="Exécuter uniquement la validation croisée EDO/EDP")
+    parser.add_argument("--edp", action="store_true", help="Exécuter uniquement la simulation EDP")
     parser.add_argument("--cross", action="store_true", help="Exécuter la comparaison entre les méthodes EDO")
     args = parser.parse_args()
     main(args)
